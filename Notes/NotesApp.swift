@@ -6,12 +6,18 @@
 //
 
 import SwiftUI
+import CoreData
 
 @main
 struct NotesApp: App {
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack {
+                NotesListView()
+                    .preferredColorScheme(.dark)
+            }
+          
         }
     }
 }
