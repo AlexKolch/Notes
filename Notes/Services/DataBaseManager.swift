@@ -13,6 +13,7 @@ protocol DataBaseManagerProtocol {
     var savedTasks: [NoteEntity] {get}
 //    func findOrCreate(_ note: Todo, context: NSManagedObjectContext) throws
     func saveAll(notes: [Todo], _ completion: @escaping () -> Void)
+    func update(note: Todo) throws
     func removeNote(_ note: Todo)
 }
 
@@ -75,11 +76,8 @@ final class DataBaseManager: DataBaseManagerProtocol {
     
     ///Добавить новую сущность в контекст контейнера
     private func add(note: Todo) {
-    
         let entity = NoteEntity(context: container.viewContext)
-      
         entity.id = Int64(note.id)
-    
         entity.todo = note.todo
         entity.completed = note.completed
      
@@ -90,15 +88,24 @@ final class DataBaseManager: DataBaseManagerProtocol {
     ///удалить сущность
     private func remove(entity: NoteEntity) {
         container.viewContext.delete(entity)
-        applyChanges()
+//        applyChanges(context: <#NSManagedObjectContext#>)
         getTasks()
     }
     
-    private func update(entity: NoteEntity, note: Todo) {
-        entity.id = Int64(note.id)
-        entity.todo = note.todo
-        entity.completed = note.completed
-        applyChanges()
+   func update(note: Todo) throws {
+       let request: NSFetchRequest<NoteEntity> = NoteEntity.fetchRequest()
+//       request.predicate = NSPredicate(format: "id == %@", note.id)
+       request.predicate = NSPredicate(format: "id == %d", note.id)
+       do {
+           let fetchedEntities = try container.viewContext.fetch(request)
+           guard let entity = fetchedEntities.first else { return }
+           entity.id = Int64(note.id)
+           entity.todo = note.todo
+           entity.completed = note.completed
+           applyChanges(context: container.viewContext)
+       } catch {
+           throw error
+       }
     }
    
     private func save(context: NSManagedObjectContext) {
@@ -111,8 +118,8 @@ final class DataBaseManager: DataBaseManagerProtocol {
         }
    }
    
-    private func applyChanges() {
-//        save(context: <#NSManagedObjectContext#>)
-//       getTasks()
+    private func applyChanges(context: NSManagedObjectContext) {
+        save(context: context)
+       getTasks()
    }
 }

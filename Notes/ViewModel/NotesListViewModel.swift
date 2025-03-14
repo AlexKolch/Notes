@@ -16,6 +16,12 @@ final class NotesListViewModel: ObservableObject {
     
     private let dataManager: DataManagerProtocol
     @Published var notes: [Todo] = []
+    @Published var searchText: String = ""
+    @Published var selectedTodo: Todo? {
+        didSet {
+            updateTodo()
+        }
+    }
 //    @Published var errorMessage: String?
     
     init(dataManager: DataManagerProtocol = DataManager()) {
@@ -30,25 +36,13 @@ final class NotesListViewModel: ObservableObject {
         }
     }
     
-    func updateNote() {
-        dataManager.getAllNotes { todos in
-            self.notes = todos
+    func updateTodo() {
+        guard let selectedTodo else { return }
+        let updatedTodo = selectedTodo.updateSelf()
+        dataManager.updateNote(note: updatedTodo) { notes in
+            self.notes = notes
         }
     }
-    
-//    func fetchTasksfromNetwork() {
-//        networkManager.downloadingData { [weak self] result in
-//            switch result {
-//            case .success(let tasks):
-//                self?.tasks = tasks
-//            case .failure(let error):
-//                print("Error: \(error.localizedDescription)")
-//                self?.errorMessage = error.errorDescription
-//            }
-//        }
-//    }
+
 }
 
-private extension NotesListViewModel {
- 
-}

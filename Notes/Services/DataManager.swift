@@ -11,6 +11,7 @@ protocol DataManagerProtocol {
     var networkManager: Networking {get set}
     var dataBaseManager: DataBaseManagerProtocol {get set}
     func getAllNotes(_ completion: @escaping ([Todo]) -> Void)
+    func updateNote(note: Todo, _ completion: @escaping ([Todo]) -> Void)
 }
 
 final class DataManager: DataManagerProtocol {
@@ -41,6 +42,17 @@ final class DataManager: DataManagerProtocol {
                     }
                 }
             }
+        }
+    }
+    
+    func updateNote(note: Todo, _ completion: @escaping ([Todo]) -> Void) {
+        do {
+            try dataBaseManager.update(note: note)
+            dataBaseManager.getAllNotes { notes in
+                completion(notes)
+            }
+        } catch {
+            print("Error updateNote - \(error.localizedDescription)")
         }
     }
 }

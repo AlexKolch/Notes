@@ -16,7 +16,7 @@ struct Welcome: Decodable {
 struct Todo: Codable {
     let id: Int
     let todo: String
-    let completed: Bool
+    var completed: Bool
     
     init(id: Int, todo: String, completed: Bool) {
         self.id = id
@@ -29,6 +29,11 @@ struct Todo: Codable {
         self.id = Int(entity.id)
         self.todo = entity.todo ?? ""
         self.completed = entity.completed
+    }
+    
+    ///Обновляем статус задачи тут
+    func updateSelf() -> Todo {
+        Todo(id: self.id, todo: self.todo, completed: !self.completed)
     }
 
 }

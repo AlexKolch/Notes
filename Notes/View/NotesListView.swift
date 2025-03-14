@@ -11,24 +11,32 @@ struct NotesListView: View {
     
     @StateObject private var vm = NotesListViewModel()
     
-//    var tasks: [Todo] = [Todo(id: 1, todo: "Test", completed: true, userID: 1), Todo(id: 2, todo: "Test2", completed: false, userID: 1), Todo(id: 3, todo: "Test3", completed: true, userID: 1)]
     
     var body: some View {
-        List {
-            ForEach(vm.notes, id: \.id) { item in
-                ListRow(item: item)
-                    .onTapGesture {
-                        withAnimation(.linear) {
-                            //vm.updateTask(item: item)
+        VStack {
+            SearchBarView(searchText: $vm.searchText)
+            List {
+                ForEach(vm.notes, id: \.id) { item in
+                    ListRow(isCompleted: item.completed, todo: item.todo, checkmarkTapped: {
+                        vm.selectedTodo = item
+//                        vm.updateTodo()
+                    })
+                        .onTapGesture {
+                            withAnimation(.linear) {
+                                //vm.updateTask(item: item)
+                                
+                            }
                         }
-                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .listStyle(.plain)
+            .navigationTitle("Задачи")
+            .onAppear {
+                //            fetchDatafromAPI()
             }
         }
-        .listStyle(.plain)
-        .navigationTitle("Задачи")
-        .onAppear {
-//            fetchDatafromAPI()
-        }
+        .frame(maxWidth: .infinity)
 //        .refreshable {
 //            vm.updateNote()
 //        }

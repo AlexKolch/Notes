@@ -16,6 +16,11 @@
 			path = Notes;
 			sourceTree = "<group>";
 		};
+		FC8914352D8441D600D051D6 /* Extension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Extension;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +38,7 @@
 			isa = PBXGroup;
 			children = (
 				FC8913772D81C9EF00D051D6 /* Notes */,
+				FC8914352D8441D600D051D6 /* Extension */,
 				FC8913762D81C9EF00D051D6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,6 +68,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				FC8913772D81C9EF00D051D6 /* Notes */,
+				FC8914352D8441D600D051D6 /* Extension */,
 			);
 			name = Notes;
 			packageProductDependencies = (
