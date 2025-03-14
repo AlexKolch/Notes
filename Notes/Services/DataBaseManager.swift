@@ -94,7 +94,6 @@ final class DataBaseManager: DataBaseManagerProtocol {
     
    func update(note: Todo) throws {
        let request: NSFetchRequest<NoteEntity> = NoteEntity.fetchRequest()
-//       request.predicate = NSPredicate(format: "id == %@", note.id)
        request.predicate = NSPredicate(format: "id == %d", note.id)
        do {
            let fetchedEntities = try container.viewContext.fetch(request)

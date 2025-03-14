@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FC8914742D849C9200D051D6 /* SwiftfulRouting in Frameworks */ = {isa = PBXBuildFile; productRef = FC8914732D849C9200D051D6 /* SwiftfulRouting */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		FC8913752D81C9EF00D051D6 /* Notes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Notes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -28,6 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC8914742D849C9200D051D6 /* SwiftfulRouting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +77,7 @@
 			);
 			name = Notes;
 			packageProductDependencies = (
+				FC8914732D849C9200D051D6 /* SwiftfulRouting */,
 			);
 			productName = Notes;
 			productReference = FC8913752D81C9EF00D051D6 /* Notes.app */;
@@ -101,6 +107,9 @@
 			);
 			mainGroup = FC89136C2D81C9EF00D051D6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FC8914722D849C9200D051D6 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FC8913762D81C9EF00D051D6 /* Products */;
 			projectDirPath = "";
@@ -331,6 +340,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FC8914722D849C9200D051D6 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.3.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FC8914732D849C9200D051D6 /* SwiftfulRouting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FC8914722D849C9200D051D6 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */;
+			productName = SwiftfulRouting;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FC89136D2D81C9EF00D051D6 /* Project object */;
 }

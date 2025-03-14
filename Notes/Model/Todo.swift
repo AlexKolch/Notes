@@ -13,7 +13,7 @@ struct Welcome: Decodable {
 }
 
 // MARK: - Todo
-struct Todo: Codable {
+struct Todo: Codable, Hashable {
     let id: Int
     let todo: String
     var completed: Bool
@@ -32,8 +32,11 @@ struct Todo: Codable {
     }
     
     ///Обновляем статус задачи тут
-    func updateSelf() -> Todo {
+    func updateStatusTodo() -> Todo {
         Todo(id: self.id, todo: self.todo, completed: !self.completed)
     }
 
+    func updateSelf(newTodo: String) -> Todo {
+        Todo(id: self.id, todo: newTodo, completed: self.completed)
+    }
 }

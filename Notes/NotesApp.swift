@@ -6,18 +6,17 @@
 //
 
 import SwiftUI
-import CoreData
+import SwiftfulRouting
 
 @main
 struct NotesApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                NotesListView()
+            RouterView { router in
+                NotesListView(vm: NotesListViewModel(router: router))
                     .preferredColorScheme(.dark)
             }
-          
         }
     }
 }
