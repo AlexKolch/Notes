@@ -14,6 +14,7 @@ protocol DataBaseManagerProtocol {
 //    func findOrCreate(_ note: Todo, context: NSManagedObjectContext) throws
     func saveAll(notes: [Todo], _ completion: @escaping () -> Void)
     func update(note: Todo) throws
+    func add(note: Todo, _ completion: @escaping ([Todo]) -> Void)
     func removeNote(_ note: Todo)
 }
 
@@ -38,10 +39,10 @@ final class DataBaseManager: DataBaseManagerProtocol {
         let viewContext = container.viewContext
         viewContext.perform {
             let notesEntities = try? NoteEntity.all(viewContext)
-            let users = notesEntities?.map({ entity in
+            let notes = notesEntities?.map({ entity in
                 Todo(entity: entity)
             })
-            completion(users ?? [])
+            completion(notes ?? [])
         }
     }
     
@@ -75,14 +76,14 @@ final class DataBaseManager: DataBaseManagerProtocol {
    }
     
     ///Добавить новую сущность в контекст контейнера
-    private func add(note: Todo) {
+    func add(note: Todo, _ completion: @escaping ([Todo]) -> Void) {
         let entity = NoteEntity(context: container.viewContext)
         entity.id = Int64(note.id)
         entity.todo = note.todo
         entity.completed = note.completed
      
-//        applyChanges()
-
+        applyChanges(context: container.viewContext)
+        getAllNotes(completion)
     }
     
     ///удалить сущность

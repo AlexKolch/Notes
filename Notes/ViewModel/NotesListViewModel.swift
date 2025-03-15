@@ -52,6 +52,12 @@ final class NotesListViewModel: ObservableObject {
         }
     }
     
+    func addTodo(newTodo: Todo) {
+        dataManager.addNote(note: newTodo) { todos in
+            self.notes = todos
+        }
+    }
+    
     private func filterTodos(inputText: String, todos: [Todo]) -> [Todo] {
         guard !inputText.isEmpty else {
             return todos

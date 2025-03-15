@@ -60,4 +60,11 @@ final class DataManager: DataManagerProtocol {
             print("Error updateNote - \(error.localizedDescription)")
         }
     }
+    
+    func addNote(note: Todo, _ completion: @escaping ([Todo]) -> Void) {
+        dataBaseManager.add(note: note, completion)
+//        dataBaseManager.getAllNotes { notes in
+//            completion(notes)
+//        }
+    }
 }

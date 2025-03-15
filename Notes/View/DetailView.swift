@@ -27,6 +27,13 @@ struct DetailView: View {
                 .foregroundStyle(.gray)
                 .padding(.bottom, 16)
             TextEditor(text: $content)
+                .overlay(alignment: .topLeading) {
+                    if content.isEmpty {
+                        Text("Напишите текст")
+                            .font(.caption)
+                            .foregroundStyle(.gray)
+                    }
+                }
             Spacer()
         }
         .padding(.horizontal, 20)
@@ -42,8 +49,18 @@ struct DetailView: View {
         .navigationBarBackButtonHidden(true)
         .onDisappear {
             print("onDisappear")
-            vm.updateTodo(newTodo: content)
+            if vm.selectedTodo != nil {
+                vm.updateTodo(newTodo: content)
+            } else {
+                addNewTodo()
+            }
         }
+    }
+    
+    private func addNewTodo() {
+        guard content != "" else { return }
+        let newTodo = Todo(id: Int.random(in: 0..<100000), todo: content, completed: false)
+        vm.addTodo(newTodo: newTodo)
     }
 }
 
