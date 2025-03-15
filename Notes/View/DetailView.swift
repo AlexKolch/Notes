@@ -11,22 +11,23 @@ import SwiftfulRouting
 struct DetailView: View {
     @ObservedObject var vm: NotesListViewModel
     var todo: Todo?
-//    var id: Int?
-//    var title: String
-//    let date: String
     @State var content: String = ""
     @Environment(\.router) var router
     
+    var dateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd/MM/yy"
+        return formatter
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
-//            Text(title)
             Text(todo != nil ? "Placeholder" : "")
                 .font(.largeTitle.bold())
                 .foregroundStyle(.white)
                 .padding(.top, 8)
                 .padding(.bottom, 6)
-            Text(Date().description)
-//            Text(date)
+            Text(dateFormatter.string(from: Date()))
                 .font(.callout)
                 .foregroundStyle(.gray)
                 .padding(.bottom, 16)
@@ -57,11 +58,6 @@ struct DetailView: View {
             } else {
                 addNewTodo()
             }
-//            if vm.selectedTodo != nil {
-//                vm.updateTodo(newTodo: content)
-//            } else {
-//                addNewTodo()
-//            }
         }
     }
     

@@ -9,8 +9,6 @@ import SwiftUI
 
 struct ListRow: View {
     
-//    let item: Todo
-    
     var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd/MM/yy"
