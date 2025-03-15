@@ -25,9 +25,13 @@ struct NotesListView: View {
                     .onTapGesture {
                         vm.selectedTodo = item
                         vm.router.showScreen(.push) { _ in
-                            DetailView(vm: vm, title: "Task title placeholder", date: Date().description, content: item.todo)
+                            DetailView(vm: vm, todo: item, content: item.todo)
+//                            DetailView(vm: vm, title: "Task title placeholder", date: Date().description, content: item.todo)
                         }
                     }
+                }
+                .onDelete { indexSet in
+                    vm.deleteItems(at: indexSet)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -50,7 +54,8 @@ struct NotesListView: View {
                             .background(.black.opacity(0.001))
                             .onTapGesture {
                                 vm.router.showScreen(.push) { _ in
-                                    DetailView(vm: vm, title: "", date: Date().description, content: "")
+                                    DetailView(vm: vm, todo: nil, content: "")
+//                                    DetailView(vm: vm, title: "", date: Date().description, content: "")
                                 }
                             }
                     }
@@ -61,11 +66,6 @@ struct NotesListView: View {
         .ignoresSafeArea(edges: .bottom)
     }
     
-//    private func fetchDatafromAPI() {
-//        DispatchQueue.global().async {
-//            vm.fetchTasksfromNetwork()
-//        }
-//    }
 }
 
 #Preview {

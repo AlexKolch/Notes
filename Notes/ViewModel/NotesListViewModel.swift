@@ -33,7 +33,7 @@ final class NotesListViewModel: ObservableObject {
                 }
             }
         }
-        addSubscibers()
+        addSubscribers()
     }
     
     func updateStatusTodo() {
@@ -53,9 +53,13 @@ final class NotesListViewModel: ObservableObject {
     }
     
     func addTodo(newTodo: Todo) {
-        dataManager.addNote(note: newTodo) { todos in
+        dataManager.addNote(newTodo) { todos in
             self.notes = todos
         }
+    }
+    
+    func deleteItems(at offsets: IndexSet) {
+        dataManager.deleteNote(at: offsets)
     }
     
     private func filterTodos(inputText: String, todos: [Todo]) -> [Todo] {
@@ -68,7 +72,14 @@ final class NotesListViewModel: ObservableObject {
         }
     }
     
-    private func addSubscibers() {
+    private func addSubscribers() {
+        dataManager.$fetchedNotes
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] todos in
+                self?.notes = todos
+            }
+            .store(in: &cancellables)
+        
         $searchText
             .combineLatest(dataManager.$fetchedNotes)
             .debounce(for: .seconds(0.4), scheduler: DispatchQueue.main)
@@ -77,6 +88,12 @@ final class NotesListViewModel: ObservableObject {
             }
             .sink { [weak self] returnedTodos in
                 self?.notes = returnedTodos
+            }
+            .store(in: &cancellables)
+        
+        dataManager.$fetchedNotes
+            .sink { [weak self] todos in
+                self?.notes = todos
             }
             .store(in: &cancellables)
     }

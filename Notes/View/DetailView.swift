@@ -10,19 +10,23 @@ import SwiftfulRouting
 
 struct DetailView: View {
     @ObservedObject var vm: NotesListViewModel
-    var title: String
-    let date: String
+    var todo: Todo?
+//    var id: Int?
+//    var title: String
+//    let date: String
     @State var content: String = ""
     @Environment(\.router) var router
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text(title)
+//            Text(title)
+            Text(todo != nil ? "Placeholder" : "")
                 .font(.largeTitle.bold())
                 .foregroundStyle(.white)
                 .padding(.top, 8)
                 .padding(.bottom, 6)
-            Text(date)
+            Text(Date().description)
+//            Text(date)
                 .font(.callout)
                 .foregroundStyle(.gray)
                 .padding(.bottom, 16)
@@ -48,12 +52,16 @@ struct DetailView: View {
         }
         .navigationBarBackButtonHidden(true)
         .onDisappear {
-            print("onDisappear")
-            if vm.selectedTodo != nil {
+            if todo != nil {
                 vm.updateTodo(newTodo: content)
             } else {
                 addNewTodo()
             }
+//            if vm.selectedTodo != nil {
+//                vm.updateTodo(newTodo: content)
+//            } else {
+//                addNewTodo()
+//            }
         }
     }
     
@@ -65,7 +73,7 @@ struct DetailView: View {
 }
 
 #Preview {
-    RouterView { router in
-        DetailView(vm: NotesListViewModel(router: router), title: "Заняться спортом", date: "02.10.24", content: "Составить список необходимых продуктов для ужина. Не забыть проверить, что уже есть в холодильнике.")
-    }
+//    RouterView { router in
+//        DetailView(vm: NotesListViewModel(router: router), title: "Заняться спортом", date: "02.10.24", content: "Составить список необходимых продуктов для ужина. Не забыть проверить, что уже есть в холодильнике.")
+//    }
 }

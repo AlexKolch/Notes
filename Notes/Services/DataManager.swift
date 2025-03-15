@@ -27,7 +27,8 @@ final class DataManager: DataManagerProtocol {
     }
     
     func getAllNotes(_ completion: @escaping ([Todo]) -> Void) {
-        dataBaseManager.getAllNotes { notes in
+        dataBaseManager.getAllNotes { [weak self] notes in
+            guard let self = self else { return }
             if !notes.isEmpty {
                 completion(notes)
                 self.fetchedNotes = notes
@@ -40,9 +41,9 @@ final class DataManager: DataManagerProtocol {
                         print("Error downloading Data: \(error)")
                     case .success(let notes):
                         print("Данные от сервера загружены")
-                            self.dataBaseManager.saveAll(notes: notes) {
+                            self.dataBaseManager.saveAll(notes: notes) { [weak self] in
                                 completion(notes) //отправляем заметки после сохранения
-                                self.fetchedNotes = notes
+                                self?.fetchedNotes = notes
                             }
                     }
                 }
@@ -53,18 +54,27 @@ final class DataManager: DataManagerProtocol {
     func updateNote(note: Todo, _ completion: @escaping ([Todo]) -> Void) {
         do {
             try dataBaseManager.update(note: note)
-            dataBaseManager.getAllNotes { notes in
-                completion(notes)
+            dataBaseManager.getAllNotes { [weak self] notes in
+//                completion(notes)
+                self?.fetchedNotes = notes
             }
         } catch {
             print("Error updateNote - \(error.localizedDescription)")
         }
     }
     
-    func addNote(note: Todo, _ completion: @escaping ([Todo]) -> Void) {
-        dataBaseManager.add(note: note, completion)
-//        dataBaseManager.getAllNotes { notes in
-//            completion(notes)
-//        }
+    func addNote(_ note: Todo, _ completion: @escaping ([Todo]) -> Void) {
+        dataBaseManager.save(note: note)
+        dataBaseManager.getAllNotes { [weak self] notes in
+            self?.fetchedNotes = notes
+        }
+ 
+    }
+    
+    func deleteNote(at indexSet: IndexSet) {
+        dataBaseManager.deleteNote(at: indexSet)
+        dataBaseManager.getAllNotes { notes in
+            self.fetchedNotes = notes
+        }
     }
 }

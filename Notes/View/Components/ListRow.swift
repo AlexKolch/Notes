@@ -29,7 +29,7 @@ struct ListRow: View {
                         checkmarkTapped?()
                     }
                 VStack(alignment: .leading, spacing: 6.0) {
-                    Text("Task title placeholder")
+                    Text("Placeholder")
                         .strikethrough(isCompleted)
                     Text(todo)
                     Text(dateFormatter.string(from: Date()))

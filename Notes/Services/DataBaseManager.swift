@@ -9,13 +9,12 @@ import Foundation
 import CoreData
 
 protocol DataBaseManagerProtocol {
+    var savedEntity: [NoteEntity] {get}
     func getAllNotes(_ completion: @escaping ([Todo]) -> Void)
-    var savedTasks: [NoteEntity] {get}
-//    func findOrCreate(_ note: Todo, context: NSManagedObjectContext) throws
     func saveAll(notes: [Todo], _ completion: @escaping () -> Void)
     func update(note: Todo) throws
-    func add(note: Todo, _ completion: @escaping ([Todo]) -> Void)
-    func removeNote(_ note: Todo)
+    func save(note: Todo)
+    func deleteNote(at indexSet: IndexSet)
 }
 
 final class DataBaseManager: DataBaseManagerProtocol {
@@ -23,7 +22,8 @@ final class DataBaseManager: DataBaseManagerProtocol {
     private let container: NSPersistentContainer
     private let containerName = "NotesContainer"
     private let entityName = "NoteEntity"
-    @Published var savedTasks: [NoteEntity] = []
+    
+    @Published var savedEntity: [NoteEntity] = []
     
     init() {
         container = NSPersistentContainer(name: containerName)
@@ -38,7 +38,7 @@ final class DataBaseManager: DataBaseManagerProtocol {
     func getAllNotes(_ completion: @escaping ([Todo]) -> Void) {
         let viewContext = container.viewContext
         viewContext.perform {
-            let notesEntities = try? NoteEntity.all(viewContext)
+            let notesEntities = try? NoteEntity.fetchAll(viewContext)
             let notes = notesEntities?.map({ entity in
                 Todo(entity: entity)
             })
@@ -50,7 +50,7 @@ final class DataBaseManager: DataBaseManagerProtocol {
         let context = container.viewContext
         context.perform {
             for note in notes {
-                try? NoteEntity.findOrCreate(note, context: context)
+               _ = try? NoteEntity.findOrCreate(note, context: context)
             }
             self.save(context: context)
         
@@ -59,38 +59,30 @@ final class DataBaseManager: DataBaseManagerProtocol {
         }
     }
     
-    func removeNote(_ note: Todo) {
-        guard let entity = savedTasks.first(where: {$0.id == note.id}) else {
-            return
-        }
-        remove(entity: entity)
-    }
     
     private func getTasks() {
         let request = NSFetchRequest<NoteEntity>(entityName: entityName)
        do {
-           savedTasks = try container.viewContext.fetch(request)
+           savedEntity = try container.viewContext.fetch(request)
        } catch let error {
            print("Error fetching Todo entities - \(error)")
        }
    }
     
     ///Добавить новую сущность в контекст контейнера
-    func add(note: Todo, _ completion: @escaping ([Todo]) -> Void) {
-        let entity = NoteEntity(context: container.viewContext)
-        entity.id = Int64(note.id)
-        entity.todo = note.todo
-        entity.completed = note.completed
-     
-        applyChanges(context: container.viewContext)
-        getAllNotes(completion)
+    func save(note: Todo) {
+        let context = container.viewContext
+        context.perform { [weak self] in
+            _ = try? NoteEntity.findOrCreate(note, context: context)
+            self?.applyChanges(context: context)
+        }
     }
     
-    ///удалить сущность
-    private func remove(entity: NoteEntity) {
-        container.viewContext.delete(entity)
-//        applyChanges(context: <#NSManagedObjectContext#>)
-        getTasks()
+    func deleteNote(at indexSet: IndexSet) {
+        guard let index = indexSet.first else { return }
+        let entityToDelete = savedEntity[index]
+        container.viewContext.delete(entityToDelete)
+        applyChanges(context: container.viewContext)
     }
     
    func update(note: Todo) throws {
@@ -108,7 +100,10 @@ final class DataBaseManager: DataBaseManagerProtocol {
        }
     }
    
-    private func save(context: NSManagedObjectContext) {
+}
+
+private extension DataBaseManager {
+     func save(context: NSManagedObjectContext) {
         if context.hasChanges {
             do {
                 try container.viewContext.save()
@@ -118,8 +113,8 @@ final class DataBaseManager: DataBaseManagerProtocol {
         }
    }
    
-    private func applyChanges(context: NSManagedObjectContext) {
+     func applyChanges(context: NSManagedObjectContext) {
         save(context: context)
-       getTasks()
-   }
+        getTasks()
+    }
 }
