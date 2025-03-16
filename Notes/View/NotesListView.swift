@@ -15,13 +15,20 @@ struct NotesListView: View {
     var body: some View {
         VStack {
             SearchBarView(searchText: $vm.searchText)
-            
+            if vm.isLoading {
+                ProgressView()
+            }
             List {
                 ForEach(vm.notes, id: \.id) { item in
                     ListRow(isCompleted: item.completed, todo: item.todo, checkmarkTapped: {
                         vm.selectedTodo = item
                         vm.updateStatusTodo()
                     })
+//                    .overlay(alignment: .center) {
+//                        if vm.isLoading {
+//                            ProgressView()
+//                        }
+//                    }
                     .contextMenu(menuItems: {
                         Button {
                             vm.router.showScreen(.push) { _ in

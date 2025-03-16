@@ -13,6 +13,7 @@ import Combine
 final class NotesListViewModel: ObservableObject {
     private let dataManager: DataManager
     let router: AnyRouter
+    @Published var isLoading: Bool = true
     @Published var notes: [Todo] = []
     @Published var searchText: String = ""
     @Published var selectedTodo: Todo?
@@ -26,6 +27,7 @@ final class NotesListViewModel: ObservableObject {
                 guard let self else { return }
                 DispatchQueue.main.async {
                     self.notes = todos
+                    self.isLoading.toggle()
                 }
             }
         }
