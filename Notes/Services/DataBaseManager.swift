@@ -13,7 +13,7 @@ protocol DataBaseManagerProtocol {
     func getAllNotes(_ completion: @escaping ([Todo]) -> Void)
     func saveAll(notes: [Todo], _ completion: @escaping () -> Void)
     func update(note: Todo) throws
-    func save(note: Todo)
+    func add(note: Todo)
     func deleteNote(at indexSet: IndexSet)
     func delete(note: Todo)
 }
@@ -70,7 +70,7 @@ final class DataBaseManager: DataBaseManagerProtocol {
    }
     
     ///Добавить новую сущность в контекст контейнера
-    func save(note: Todo) {
+    func add(note: Todo) {
         let context = container.viewContext
         context.perform { [weak self] in
             _ = try? NoteEntity.findOrCreate(note, context: context)
@@ -92,6 +92,7 @@ final class DataBaseManager: DataBaseManagerProtocol {
     }
     
    func update(note: Todo) throws {
+       let context = container.viewContext
        let request: NSFetchRequest<NoteEntity> = NoteEntity.fetchRequest()
        request.predicate = NSPredicate(format: "id == %d", note.id)
        do {
@@ -100,7 +101,7 @@ final class DataBaseManager: DataBaseManagerProtocol {
            entity.id = Int64(note.id)
            entity.todo = note.todo
            entity.completed = note.completed
-           applyChanges(context: container.viewContext)
+           try context.save()
        } catch {
            throw error
        }
@@ -119,7 +120,7 @@ private extension DataBaseManager {
         }
    }
    
-     func applyChanges(context: NSManagedObjectContext) {
+    func applyChanges(context: NSManagedObjectContext) {
         save(context: context)
         getTasks()
     }

@@ -8,15 +8,7 @@
 import Foundation
 import Combine
 
-protocol DataManagerProtocol {
-    var networkManager: Networking {get set}
-    var dataBaseManager: DataBaseManagerProtocol {get set}
-    func getAllNotes(_ completion: @escaping ([Todo]) -> Void)
-    func updateNote(note: Todo, _ completion: @escaping ([Todo]) -> Void)
-    var fetchedNotes: [Todo] {get}
-}
-
-final class DataManager: DataManagerProtocol {
+final class DataManager {
     var networkManager: Networking
     var dataBaseManager: DataBaseManagerProtocol
     @Published var fetchedNotes: [Todo] = []
@@ -41,9 +33,9 @@ final class DataManager: DataManagerProtocol {
                         print("Error downloading Data: \(error)")
                     case .success(let notes):
                         print("Данные от сервера загружены")
-                            self.dataBaseManager.saveAll(notes: notes) { [weak self] in
+                            self.dataBaseManager.saveAll(notes: notes) {
                                 completion(notes) //отправляем заметки после сохранения
-                                self?.fetchedNotes = notes
+                                self.fetchedNotes = notes
                             }
                     }
                 }
@@ -51,11 +43,10 @@ final class DataManager: DataManagerProtocol {
         }
     }
     
-    func updateNote(note: Todo, _ completion: @escaping ([Todo]) -> Void) {
+    func updateNote(note: Todo) {
         do {
             try dataBaseManager.update(note: note)
             dataBaseManager.getAllNotes { [weak self] notes in
-                completion(notes)
                 self?.fetchedNotes = notes
             }
         } catch {
@@ -63,8 +54,8 @@ final class DataManager: DataManagerProtocol {
         }
     }
     
-    func addNote(_ note: Todo, _ completion: @escaping ([Todo]) -> Void) {
-        dataBaseManager.save(note: note)
+    func addNote(_ note: Todo) {
+        dataBaseManager.add(note: note)
         dataBaseManager.getAllNotes { [weak self] notes in
             self?.fetchedNotes = notes
         }

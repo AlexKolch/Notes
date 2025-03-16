@@ -35,34 +35,22 @@ final class NotesListViewModel: ObservableObject {
     func updateStatusTodo() {
         guard let selectedTodo else { return }
         let updatedTodo = selectedTodo.updateStatusTodo()
-        dataManager.updateNote(note: updatedTodo) { notes in
-            self.notes = notes
-        }
+        dataManager.updateNote(note: updatedTodo)
     }
     
     func updateTodo(newTodo: String) {
         guard let selectedTodo else { return }
         DispatchQueue.global().async { [weak self] in
             let updatedTodo = selectedTodo.updateSelf(newTodo: newTodo)
-            self?.dataManager.updateNote(note: updatedTodo) { notes in
-                DispatchQueue.main.async {
-                    self?.notes = notes
-                }
-            }
+            self?.dataManager.updateNote(note: updatedTodo)
         }
-        let updatedTodo = selectedTodo.updateSelf(newTodo: newTodo)
-        dataManager.updateNote(note: updatedTodo) { notes in
-            self.notes = notes
-        }
+//        let updatedTodo = selectedTodo.updateSelf(newTodo: newTodo)
+//        dataManager.updateNote(note: updatedTodo)
     }
     
     func addTodo(newTodo: Todo) {
         DispatchQueue.global().async { [weak self] in
-            self?.dataManager.addNote(newTodo) { todos in
-                DispatchQueue.main.async {
-                    self?.notes = todos
-                }
-            }
+            self?.dataManager.addNote(newTodo)
         }
     }
     
