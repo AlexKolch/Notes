@@ -42,6 +42,14 @@ final class NotesListViewModel: ObservableObject {
     
     func updateTodo(newTodo: String) {
         guard let selectedTodo else { return }
+        DispatchQueue.global().async { [weak self] in
+            let updatedTodo = selectedTodo.updateSelf(newTodo: newTodo)
+            self?.dataManager.updateNote(note: updatedTodo) { notes in
+                DispatchQueue.main.async {
+                    self?.notes = notes
+                }
+            }
+        }
         let updatedTodo = selectedTodo.updateSelf(newTodo: newTodo)
         dataManager.updateNote(note: updatedTodo) { notes in
             self.notes = notes
@@ -49,13 +57,24 @@ final class NotesListViewModel: ObservableObject {
     }
     
     func addTodo(newTodo: Todo) {
-        dataManager.addNote(newTodo) { todos in
-            self.notes = todos
+        DispatchQueue.global().async { [weak self] in
+            self?.dataManager.addNote(newTodo) { todos in
+                DispatchQueue.main.async {
+                    self?.notes = todos
+                }
+            }
         }
     }
     
     func deleteItems(at offsets: IndexSet) {
-        dataManager.deleteNote(at: offsets)
+        DispatchQueue.global().async { [weak self] in
+            self?.dataManager.deleteNote(at: offsets) { notes in
+                DispatchQueue.main.async {
+                    self?.notes = notes
+                }
+            }
+        }
+       
     }
     
     func delete(todo: Todo) {
@@ -82,18 +101,13 @@ final class NotesListViewModel: ObservableObject {
         
         $searchText
             .combineLatest(dataManager.$fetchedNotes)
-            .debounce(for: .seconds(0.4), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.4), scheduler: DispatchQueue.global())
             .map { text, todos in
                 self.filterTodos(inputText: text, todos: todos)
             }
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] returnedTodos in
                 self?.notes = returnedTodos
-            }
-            .store(in: &cancellables)
-        
-        dataManager.$fetchedNotes
-            .sink { [weak self] todos in
-                self?.notes = todos
             }
             .store(in: &cancellables)
     }
