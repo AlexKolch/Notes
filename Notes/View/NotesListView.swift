@@ -22,11 +22,34 @@ struct NotesListView: View {
                         vm.selectedTodo = item
                         vm.updateStatusTodo()
                     })
+                    .contextMenu(menuItems: {
+                        Button {
+                            vm.router.showScreen(.push) { _ in
+                                DetailView(vm: vm, todo: item, content: item.todo)
+                            }
+                        } label: {
+                            Label("Редактировать", systemImage: "square.and.pencil")
+                        }
+                        Button {
+                            print("Поделиться")
+                        } label: {
+                            Label("Поделиться", systemImage: "square.and.arrow.up")
+                        }
+                        Button(role: .destructive) {
+                            withAnimation {
+                                vm.delete(todo: item)
+                            }
+                        } label: {
+                            HStack {
+                                Text("Удалить")
+                                Image(systemName: "trash")
+                            }
+                        }
+                    })
                     .onTapGesture {
                         vm.selectedTodo = item
                         vm.router.showScreen(.push) { _ in
                             DetailView(vm: vm, todo: item, content: item.todo)
-//                            DetailView(vm: vm, title: "Task title placeholder", date: Date().description, content: item.todo)
                         }
                     }
                 }

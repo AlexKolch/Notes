@@ -73,8 +73,17 @@ final class DataManager: DataManagerProtocol {
     
     func deleteNote(at indexSet: IndexSet) {
         dataBaseManager.deleteNote(at: indexSet)
-        dataBaseManager.getAllNotes { notes in
-            self.fetchedNotes = notes
+        dataBaseManager.getAllNotes {[weak self] notes in
+            DispatchQueue.main.async {
+                self?.fetchedNotes = notes
+            }
+        }
+    }
+    
+    func delete(todo: Todo) {
+        dataBaseManager.delete(note: todo)
+        dataBaseManager.getAllNotes { [weak self] notes in
+            self?.fetchedNotes = notes
         }
     }
 }

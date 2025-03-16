@@ -22,11 +22,11 @@ struct DetailView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text(todo != nil ? "Placeholder" : "")
-                .font(.largeTitle.bold())
-                .foregroundStyle(.white)
-                .padding(.top, 8)
-                .padding(.bottom, 6)
+//            Text(todo != nil ? "Placeholder" : "")
+//                .font(.largeTitle.bold())
+//                .foregroundStyle(.white)
+//                .padding(.top, 8)
+//                .padding(.bottom, 6)
             Text(dateFormatter.string(from: Date()))
                 .font(.callout)
                 .foregroundStyle(.gray)

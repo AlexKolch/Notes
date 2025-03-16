@@ -8,10 +8,7 @@
 import Foundation
 import SwiftfulRouting
 import Combine
-//protocol NotesListVMProtocol {
-//    var dbManager: DataManagerProtocol {get set}
-//    var notes: [Todo] {get}
-//}
+
 
 final class NotesListViewModel: ObservableObject {
     private let dataManager: DataManager
@@ -20,7 +17,6 @@ final class NotesListViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var selectedTodo: Todo?
     private var cancellables = Set<AnyCancellable>()
-//    @Published var errorMessage: String?
     
     init(dataManager: DataManager = DataManager(), router: AnyRouter) {
         self.dataManager = dataManager
@@ -60,6 +56,10 @@ final class NotesListViewModel: ObservableObject {
     
     func deleteItems(at offsets: IndexSet) {
         dataManager.deleteNote(at: offsets)
+    }
+    
+    func delete(todo: Todo) {
+        dataManager.delete(todo: todo)
     }
     
     private func filterTodos(inputText: String, todos: [Todo]) -> [Todo] {

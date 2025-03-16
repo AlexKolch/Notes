@@ -15,6 +15,7 @@ protocol DataBaseManagerProtocol {
     func update(note: Todo) throws
     func save(note: Todo)
     func deleteNote(at indexSet: IndexSet)
+    func delete(note: Todo)
 }
 
 final class DataBaseManager: DataBaseManagerProtocol {
@@ -52,8 +53,7 @@ final class DataBaseManager: DataBaseManagerProtocol {
             for note in notes {
                _ = try? NoteEntity.findOrCreate(note, context: context)
             }
-            self.save(context: context)
-        
+            self.applyChanges(context: context)
             completion()
             print("Данные от сервера успешно сохранены в БД")
         }
@@ -81,6 +81,12 @@ final class DataBaseManager: DataBaseManagerProtocol {
     func deleteNote(at indexSet: IndexSet) {
         guard let index = indexSet.first else { return }
         let entityToDelete = savedEntity[index]
+        container.viewContext.delete(entityToDelete)
+        applyChanges(context: container.viewContext)
+    }
+    
+    func delete(note: Todo) {
+        guard let entityToDelete = savedEntity.first(where: { $0.id == note.id }) else { return }
         container.viewContext.delete(entityToDelete)
         applyChanges(context: container.viewContext)
     }
